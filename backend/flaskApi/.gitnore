@@ -1,7 +1,0 @@
-src/
-api/
-flaskApi/
-myFlask/
-.venv/
-__pycache__/
-*.pyc
