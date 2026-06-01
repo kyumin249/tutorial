@@ -3,12 +3,13 @@ import React from 'react'
 function Dashboard({ setCurrentPage, userStats, completedRoadmapNodes, completedLessons }) {
   const { xp = 1420 } = userStats || {}
   
-  // Calculate stats based on roadmap and lessons completed
-  const totalRoadmapNodes = 6 // Standard roadmap node list size
+  // 3개 트랙 * 6노드 = 18개 로드맵 노드
+  const totalRoadmapNodes = 18
   const completedNodesCount = Object.keys(completedRoadmapNodes || {}).filter(k => completedRoadmapNodes[k]).length
   const roadmapProgress = Math.min(100, Math.round((completedNodesCount / totalRoadmapNodes) * 100))
 
-  const totalLessons = 5 // Standard lessons count
+  // 3개 트랙 * 3레슨 = 9개 튜토리얼 레슨
+  const totalLessons = 9
   const completedLessonsCount = Object.keys(completedLessons || {}).filter(k => completedLessons[k]).length
   const lessonProgress = Math.min(100, Math.round((completedLessonsCount / totalLessons) * 100))
 
@@ -66,25 +67,25 @@ function Dashboard({ setCurrentPage, userStats, completedRoadmapNodes, completed
   const activities = [
     {
       id: 1,
-      text: '튜토리얼 "React JSX 기초"의 퀴즈를 100점으로 통과하였습니다!',
+      text: '튜토리얼 "REST API와 HTTP 메서드" 퀴즈를 100점으로 통과하였습니다!',
       time: '1시간 전',
       type: 'success'
     },
     {
       id: 2,
-      text: '로드맵에서 "JavaScript Basics" 단계를 완료함으로 기록했습니다.',
+      text: '로드맵에서 "HTTP & 웹 기초" 단계를 완료로 기록했습니다. (+150 XP)',
       time: '3시간 전',
       type: 'success'
     },
     {
       id: 3,
-      text: 'Q&A 게시판에 "Vite 환경 변수 설정법"에 관한 질문을 작성했습니다.',
+      text: 'Q&A 게시판에 "Spring Boot vs Node.js 입문 비교"에 관한 질문을 작성했습니다.',
       time: '어제',
       type: 'primary'
     },
     {
       id: 4,
-      text: '회원가입 기념 웰컴 배지 "HTML 마스터"를 획득하였습니다!',
+      text: '회원가입 기념 웰컴 배지 "API 마스터"와 "C언어 마스터"를 획득하였습니다!',
       time: '2일 전',
       type: 'warning'
     }
@@ -93,7 +94,7 @@ function Dashboard({ setCurrentPage, userStats, completedRoadmapNodes, completed
   return (
     <div>
       <h2 className="page-title">대시보드</h2>
-      <p className="page-subtitle">학습 진도 상황과 최근 활동 내역을 한눈에 살펴보세요.</p>
+      <p className="page-subtitle">백엔드·임베디드·데브옵스 학습 진도와 최근 활동 내역을 한눈에 살펴보세요.</p>
 
       {/* Summary Widgets Grid */}
       <div className="dashboard-summary-grid">
@@ -116,18 +117,24 @@ function Dashboard({ setCurrentPage, userStats, completedRoadmapNodes, completed
           <div className="featured-glow" />
           <div className="featured-header">
             <span className="badge badge-indigo">추천 튜토리얼</span>
-            <h3 className="featured-title">React 19 핵심 문법: useState와 마주하기</h3>
+            <h3 className="featured-title">Docker 컨테이너 실무: 이미지 빌드부터 배포까지</h3>
             <p className="featured-desc">
-              리액트 상태 관리의 출발점이자 가장 핵심적인 Hook인 `useState`를 직접 웹 기반 코드 에디터로 실행하고 시뮬레이션하며 배워보세요.
+              Docker의 이미지 레이어 구조와 Dockerfile 문법, docker-compose 다중 서비스 구성을 직접 실행하며 데브옵스 파이프라인의 핵심을 체득해 보세요.
             </p>
           </div>
           
           <div className="featured-meta">
-            <span className="badge badge-magenta">소요 시간: 15분</span>
-            <span className="badge badge-emerald">획득 경험치: 150 XP</span>
+            <span className="badge badge-magenta">소요 시간: 20분</span>
+            <span className="badge badge-emerald">획득 경험치: 100 XP</span>
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
+            <span className="badge badge-amber">DevOps 트랙</span>
+            <span className="badge badge-indigo">Backend 트랙</span>
+            <span className="badge badge-emerald">Embedded 트랙</span>
+          </div>
+
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
             <button className="btn btn-primary" onClick={() => setCurrentPage('tutorial')}>
               바로 학습하러 가기
               <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" width="16" height="16">

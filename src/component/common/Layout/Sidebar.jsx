@@ -64,7 +64,7 @@ function Sidebar({ currentPage, setCurrentPage }) {
         <div className="profile-avatar">ME</div>
         <div className="profile-info">
           <span className="profile-name">개인 개발자</span>
-          <span className="profile-title">Lv. 3 웹 루키</span>
+          <span className="profile-title">Lv. 3 개발 주니어</span>
         </div>
       </div>
     </div>

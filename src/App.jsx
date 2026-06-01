@@ -9,48 +9,48 @@ import QA from './component/qa/QA'
 const DEFAULT_QUESTIONS = [
   {
     id: 1,
-    title: 'Vite에서 환경변수(.env) 접근 시 process.env가 동작하지 않아요!',
-    content: '리액트 Vite 프로젝트를 진행하고 있는데, .env 파일에 VITE_API_KEY=1234 라고 선언한 뒤 컴포넌트에서 process.env.VITE_API_KEY 로 불러오려고 하니 undefined 에러가 발생합니다. 혹시 Vite 환경에서는 환경변수 로딩 방식이 다른가요?',
-    author: '초보자',
+    title: 'Spring Boot와 Node.js 중 백엔드 입문용으로 무엇이 더 좋을까요?',
+    content: '백엔드 개발자를 목표로 공부를 시작하려는 취준생입니다. 현재 대세인 Java Spring Boot를 바로 파고들어야 할지, 아니면 자바스크립트 학습 후 가볍게 Express(Node.js)로 시작해야 할지 갈피를 못 잡겠습니다. 실무에서 어떤 언어/프레임워크가 더 경쟁력 있을까요?',
+    author: '백엔드새싹',
     date: '3시간 전',
     upvotes: 12,
     upvoted: false,
-    tags: ['Vite', 'React'],
+    tags: ['Backend', 'Database'],
     replies: [
       {
         id: 101,
-        author: 'Vite마스터',
+        author: '백엔드마스터',
         date: '2시간 전',
-        content: 'Vite에서는 Webpack과 달리 NodeJS의 `process.env`가 아닌 `import.meta.env` 객체를 통해 환경 변수에 접근해야 합니다! 또한 보안을 위해 `VITE_` 접두사가 붙은 변수만 클라이언트 측 코드로 바인딩되므로, `import.meta.env.VITE_API_KEY` 로 호출하시면 정상 작동할 것입니다.'
+        content: '국내 대기업 및 금융권 SI 환경에서는 정적 타입과 객체 지향 패턴이 확고한 Java + Spring Boot가 압도적인 시장 점유율을 차지하고 있습니다. 하지만 빠른 시제품 개발이나 자바스크립트 풀스택을 지향하신다면 Node.js도 좋은 선택지입니다. 결국 둘 다 다루게 될 가능성이 높으니 본인에게 익숙한 언어로 API 기초를 설계해보고 데이터베이스 연동 경험을 넓히는 것을 추천합니다.'
       }
     ]
   },
   {
     id: 2,
-    title: 'React 19에서 변경된 주요 Hook 사용 방식은 어떤 게 있나요?',
-    content: 'React 19 버전으로 마이그레이션을 고민하고 있습니다. useActionState나 useTransition 등 비동기 처리를 돕는 신규 Hook들이 생겼다고 들었는데, 이 외에 기존 Hook(예: useContext)들의 사용법도 대폭 간소화된 점이 있는지 요약 정리해 주실 분을 찾습니다.',
-    author: '리액터',
+    title: '임베디드 개발을 위해 C++까지 깊게 공부해야 할까요?',
+    content: '펌웨어 개발자를 지망하는 전공자입니다. 보통 MCU 제어에는 C 언어가 표준으로 쓰인다고 들었는데, 현대 임베디드 실무나 로봇 공학 등에서는 C++ 객체 지향 프로그래밍도 많이 활용되나요? 어떤 범위까지 학습해 두어야 취업에 도움이 될지 궁금합니다.',
+    author: '하드웨어러버',
     date: '어제',
     upvotes: 8,
     upvoted: false,
-    tags: ['React'],
+    tags: ['Embedded', 'C-Language'],
     replies: []
   },
   {
     id: 3,
-    title: 'CSS Grid와 Flexbox 중 카드 배치 시 어떤 레이아웃 방식이 더 좋나요?',
-    content: '반응형 카드 리스트를 배치하려 하는데, Flexbox로 가로 나열 후 wrap 처리하여 정렬하는 것과 Grid로 grid-template-columns 설정하는 것 중 실무 퍼블리셔분들은 어떤 방식을 더 권장하시나요?',
-    author: '디자이너',
+    title: 'CI/CD 파이프라인 구축 시 Jenkins와 GitHub Actions의 차이',
+    content: '사이드 프로젝트 배포 자동화를 구성하려 합니다. 기존에는 Jenkins가 국룰이라고 배웠는데, 최근에는 GitHub Actions로 간편하게 워크플로우를 정의하는 기업들이 많다고 들었습니다. 이 두 도구의 실제 현업에서의 체감상 장단점이 궁금합니다.',
+    author: '인프라초보',
     date: '3일 전',
     upvotes: 5,
     upvoted: false,
-    tags: ['CSS'],
+    tags: ['DevOps', 'Docker'],
     replies: [
       {
         id: 102,
-        author: '웹퍼블리셔',
+        author: '데브옵스구루',
         date: '2일 전',
-        content: '보통 Flexbox는 1차원 정렬(단일 행 또는 단일 열 방향)에 최적화되어 있고, Grid는 2차원 구조(가로행과 세로열 동시 바인딩)에 특화되어 있습니다! 카드 격자 배치라면 각 요소의 높이와 간격이 고르게 유지될 수 있도록 CSS Grid (`grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))`)를 적극 추천합니다.'
+        content: 'Jenkins는 온프레미스 서버에 직접 구축하여 보안성이 뛰어나고 커스텀 플러그인 생태계가 압도적이지만, 자체 서버 관리 리소스가 듭니다. 반면 GitHub Actions는 클라우드 호스팅 기반(SaaS)이라 별도의 인프라 설치 없이 YAML 파일 설정 몇 줄로 즉시 구현되어 편의성이 극도로 뛰어납니다. 대형 엔터프라이즈급이나 폐쇄망 환경이 아니라면, 가볍고 관리 오버헤드가 적은 GitHub Actions를 먼저 경험해보시는 것이 최신 트렌드에 잘 맞습니다.'
       }
     ]
   }
@@ -71,20 +71,37 @@ function App() {
 
   const [completedRoadmapNodes, setCompletedRoadmapNodes] = useState(() => {
     const saved = localStorage.getItem('devpath_completed_roadmap')
-    return saved ? JSON.parse(saved) : {
-      'html-css': true,
-      'js-basics': true
+    const parsed = saved ? JSON.parse(saved) : null
+    if (!parsed || parsed['html-css'] !== undefined || parsed['js-basics'] !== undefined) {
+      return {
+        'back-http': true,
+        'back-lang': true,
+        'emb-c': false,
+        'emb-arch': false,
+        'dev-linux': false,
+        'dev-net': false
+      }
     }
+    return parsed
   })
 
   const [completedLessons, setCompletedLessons] = useState(() => {
     const saved = localStorage.getItem('devpath_completed_lessons')
-    return saved ? JSON.parse(saved) : {
-      'jsx-basics': false,
-      'component-reusability': false,
-      'usestate-hook': false,
-      'useeffect-hook': false
+    const parsed = saved ? JSON.parse(saved) : null
+    if (!parsed || parsed['jsx-basics'] !== undefined || parsed['useeffect-hook'] !== undefined) {
+      return {
+        'backend-rest': false,
+        'backend-db': false,
+        'backend-auth': false,
+        'embed-c': false,
+        'embed-gpio': false,
+        'embed-interrupt': false,
+        'devops-docker': false,
+        'devops-cicd': false,
+        'devops-k8s': false
+      }
     }
+    return parsed
   })
 
   const [questions, setQuestions] = useState(() => {

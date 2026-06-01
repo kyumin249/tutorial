@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DevPath — 대학생 실무 튜토리얼 대시보드</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ─────────────────────────────────────────────
+       Design Tokens
+    ───────────────────────────────────────────── */
+    :root {
+      --bg-base:        #0b0e1a;
+      --bg-panel:       rgba(255,255,255,0.04);
+      --bg-panel-hover: rgba(255,255,255,0.07);
+      --border:         rgba(255,255,255,0.08);
+      --border-accent:  rgba(99,102,241,0.45);
+
+      --text-main:  #f0f0f8;
+      --text-sub:   #9ca3af;
+      --text-dim:   #6b7280;
+
+      --indigo:  #6366f1;
+      --indigo-l:#818cf8;
+      --cyan:    #06b6d4;
+      --cyan-l:  #67e8f9;
+      --emerald: #10b981;
+      --emerald-l:#34d399;
+      --amber:   #f59e0b;
+      --amber-l: #fcd34d;
+      --rose:    #f43f5e;
+      --rose-l:  #fb7185;
+      --violet:  #7c3aed;
+
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+
+      --shadow: 0 8px 32px rgba(0,0,0,0.45);
+      --shadow-sm: 0 2px 12px rgba(0,0,0,0.3);
+
+      --tree-line: rgba(99,102,241,0.35);
+      --tree-line-w: 2px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── Animated background gradient dots ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 15% 20%, rgba(99,102,241,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 75%, rgba(6,182,212,0.10) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 55% 45%, rgba(124,58,237,0.07) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─────────────────────────────────────────────
+       Layout Shells
+    ───────────────────────────────────────────── */
+    .top-bar {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 60px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(11,14,26,0.85);
+      backdrop-filter: blur(20px);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+    .logo-icon {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, var(--indigo), var(--cyan));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 800;
+      box-shadow: 0 0 16px rgba(99,102,241,0.4);
+    }
+    .top-pills {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 99px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      background: var(--bg-panel);
+      color: var(--text-sub);
+    }
+    .pill.active { border-color: var(--indigo); color: var(--indigo-l); background: rgba(99,102,241,0.1); }
+    .pill-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 6px var(--emerald);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet), var(--indigo));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700;
+      border: 2px solid var(--border-accent);
+    }
+
+    .dashboard {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 20px;
+      padding: 20px 24px 24px;
+      min-height: calc(100vh - 60px);
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    /* ─────────────────────────────────────────────
+       Glass Panel
+    ───────────────────────────────────────────── */
+    .glass {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+    }
+
+    /* ─────────────────────────────────────────────
+       LEFT COL — Roadmap Tree
+    ───────────────────────────────────────────── */
+    .left-col { display: flex; flex-direction: column; gap: 16px; }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .panel-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-sub);
+    }
+
+    /* Track Tab Switcher */
+    .track-tabs {
+      display: flex;
+      gap: 6px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .track-tab {
+      flex: 1;
+      padding: 7px 0;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: none;
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .track-tab.backend.active  { background: rgba(99,102,241,0.15); border-color: var(--indigo); color: var(--indigo-l); }
+    .track-tab.devops.active   { background: rgba(6,182,212,0.12);  border-color: var(--cyan);   color: var(--cyan-l); }
+    .track-tab.embedded.active { background: rgba(16,185,129,0.12); border-color: var(--emerald);color: var(--emerald-l); }
+    .track-tab:hover:not(.active) { border-color: rgba(255,255,255,0.2); color: var(--text-sub); }
+
+    /* Tree Container */
+    .tree-container {
+      padding: 20px 20px 20px 28px;
+      overflow-y: auto;
+      max-height: calc(100vh - 210px);
+    }
+    .tree-root { list-style: none; }
+
+    /* ── Tree Node ── */
+    .tree-branch {
+      position: relative;
+      padding-left: 28px;
+      margin-bottom: 0;
+    }
+
+    /* Vertical line running through children */
+    .tree-branch::before {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 28px;
+      bottom: 0;
+      width: var(--tree-line-w);
+      background: var(--tree-line);
+    }
+    .tree-branch:last-child::before { display: none; }
+
+    /* Horizontal connector to node */
+    .tree-branch::after {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 14px;
+      width: 17px;
+      height: var(--tree-line-w);
+      background: var(--tree-line);
+    }
+
+    /* Root node has no horizontal connector */
+    .tree-root > .tree-branch::after { display: none; }
+    .tree-root > .tree-branch::before {
+      top: 32px;
+    }
+    .tree-root > .tree-branch { padding-left: 0; }
+
+    .node {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.18s;
+      margin-bottom: 2px;
+      position: relative;
+    }
+    .node:hover { background: rgba(255,255,255,0.05); }
+    .node.selected { background: rgba(99,102,241,0.12); }
+
+    .node-dot {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem;
+      border: 2px solid;
+      position: relative;
+      z-index: 1;
+    }
+    .node-dot.done     { background: rgba(16,185,129,0.2); border-color: var(--emerald); color: var(--emerald-l); }
+    .node-dot.active   { background: rgba(99,102,241,0.2); border-color: var(--indigo);  color: var(--indigo-l);  box-shadow: 0 0 10px rgba(99,102,241,0.4); }
+    .node-dot.locked   { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.15); color: var(--text-dim); }
+
+    .node-info { flex: 1; min-width: 0; }
+    .node-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .node-dot.done   + .node-info .node-name { color: var(--emerald-l); }
+    .node-dot.active + .node-info .node-name { color: var(--text-main); }
+    .node-dot.locked + .node-info .node-name { color: var(--text-dim);  }
+    .node-sub {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-top: 1px;
+    }
+
+    .node-xp {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 99px;
+      flex-shrink: 0;
+    }
+    .node-xp.done   { background: rgba(16,185,129,0.15); color: var(--emerald-l); }
+    .node-xp.active { background: rgba(99,102,241,0.15); color: var(--indigo-l); }
+    .node-xp.locked { background: rgba(255,255,255,0.05); color: var(--text-dim); }
+
+    /* Sub-tree children */
+    .tree-children {
+      list-style: none;
+      position: relative;
+      padding-left: 0;
+    }
+
+    /* Progress bar under tree */
+    .progress-footer {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+    }
+    .progress-bar {
+      height: 5px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--indigo), var(--cyan));
+      transition: width 0.4s ease;
+    }
+
+    /* ─────────────────────────────────────────────
+       RIGHT COL
+    ───────────────────────────────────────────── */
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ── Blog Cards ── */
+    .cards-section { flex-shrink: 0; }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      padding: 18px;
+    }
+
+    .blog-card {
+      border-radius: var(--radius-md);
+      padding: 18px;
+      border: 1px solid var(--border);
+      background: var(--bg-panel);
+      transition: transform 0.22s, border-color 0.22s, box-shadow 0.22s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .blog-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .blog-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255,255,255,0.15);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    }
+
+    .blog-card.backend::before  { background: linear-gradient(90deg, var(--indigo), var(--violet)); }
+    .blog-card.devops::before   { background: linear-gradient(90deg, var(--cyan), var(--emerald)); }
+    .blog-card.embedded::before { background: linear-gradient(90deg, var(--amber), var(--rose)); }
+    .blog-card.db::before       { background: linear-gradient(90deg, var(--emerald), var(--cyan)); }
+    .blog-card.linux::before    { background: linear-gradient(90deg, var(--rose), var(--violet)); }
+    .blog-card.cloud::before    { background: linear-gradient(90deg, var(--cyan), var(--indigo)); }
+
+    .card-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+    }
+    .tag-backend  { background: rgba(99,102,241,0.15); color: var(--indigo-l); }
+    .tag-devops   { background: rgba(6,182,212,0.15);  color: var(--cyan-l); }
+    .tag-embedded { background: rgba(245,158,11,0.15); color: var(--amber-l); }
+    .tag-db       { background: rgba(16,185,129,0.15); color: var(--emerald-l); }
+    .tag-linux    { background: rgba(244,63,94,0.15);  color: var(--rose-l); }
+    .tag-cloud    { background: rgba(6,182,212,0.15);  color: var(--cyan-l); }
+
+    .card-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+    .card-desc {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-author {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+    .mini-avatar {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--indigo), var(--violet));
+    }
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--indigo-l);
+      text-decoration: none;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(99,102,241,0.3);
+      background: rgba(99,102,241,0.08);
+      transition: all 0.18s;
+    }
+    .card-link:hover { background: rgba(99,102,241,0.18); border-color: var(--indigo); }
+
+    /* ── Q&A ── */
+    .qa-section { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    .qa-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .qa-search {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 13px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      font-size: 0.8rem;
+      font-family: 'Inter', sans-serif;
+    }
+    .qa-search input {
+      background: none; border: none; outline: none;
+      color: var(--text-main); font-size: 0.8rem; font-family: 'Inter', sans-serif;
+      flex: 1;
+    }
+    .qa-search input::placeholder { color: var(--text-dim); }
+    .qa-tag-row {
+      display: flex;
+      gap: 6px;
+      padding: 10px 18px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .qa-tag {
+      padding: 4px 11px;
+      border-radius: 99px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.18s;
+    }
+    .qa-tag.active { background: rgba(99,102,241,0.15); border-color: var(--indigo); color: var(--indigo-l); }
+    .qa-tag:hover:not(.active) { border-color: rgba(255,255,255,0.2); color: var(--text-sub); }
+
+    .qa-counter {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 11px;
+      border-radius: 99px;
+      background: rgba(244,63,94,0.12);
+      border: 1px solid rgba(244,63,94,0.25);
+      color: var(--rose-l);
+      margin-left: auto;
+    }
+
+    .qa-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .qa-list::-webkit-scrollbar { width: 4px; }
+    .qa-list::-webkit-scrollbar-track { background: transparent; }
+    .qa-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
+
+    .qa-item {
+      display: flex;
+      gap: 12px;
+      padding: 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--bg-panel);
+      cursor: pointer;
+      transition: border-color 0.18s, background 0.18s;
+    }
+    .qa-item:hover { border-color: rgba(255,255,255,0.14); background: var(--bg-panel-hover); }
+
+    .vote-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .vote-btn {
+      width: 28px; height: 28px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+      transition: all 0.18s;
+    }
+    .vote-btn:hover { border-color: var(--indigo); color: var(--indigo-l); background: rgba(99,102,241,0.1); }
+    .vote-btn.upvoted { background: rgba(99,102,241,0.15); border-color: var(--indigo); color: var(--indigo-l); }
+    .vote-count { font-size: 0.75rem; font-weight: 700; color: var(--text-sub); }
+
+    .qa-body { flex: 1; min-width: 0; }
+    .qa-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+    .qa-excerpt {
+      font-size: 0.73rem;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .qa-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .qa-badge {
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: 0.65rem;
+      font-weight: 700;
+    }
+    .qa-author {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-left: auto;
+    }
+    .qa-replies {
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+    }
+
+    /* ─── New Question Form ─── */
+    .qa-compose {
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .compose-input {
+      flex: 1;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text-main);
+      font-size: 0.8rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .compose-input:focus { border-color: var(--indigo); background: rgba(99,102,241,0.05); }
+    .compose-input::placeholder { color: var(--text-dim); }
+
+    .btn-primary {
+      padding: 8px 18px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: linear-gradient(135deg, var(--indigo), var(--violet));
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s, transform 0.15s;
+      box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .limit-warn {
+      font-size: 0.68rem;
+      color: var(--rose-l);
+      padding: 0 18px 10px;
+      display: flex; align-items: center; gap: 5px;
+    }
+
+    /* ─── Misc Badges ─── */
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 99px; font-size: 0.68rem; font-weight: 700; border: 1px solid; }
+    .badge-indigo  { background: rgba(99,102,241,0.12);  border-color: rgba(99,102,241,0.3);  color: var(--indigo-l); }
+    .badge-cyan    { background: rgba(6,182,212,0.12);   border-color: rgba(6,182,212,0.3);   color: var(--cyan-l); }
+    .badge-emerald { background: rgba(16,185,129,0.12);  border-color: rgba(16,185,129,0.3);  color: var(--emerald-l); }
+    .badge-amber   { background: rgba(245,158,11,0.12);  border-color: rgba(245,158,11,0.3);  color: var(--amber-l); }
+    .badge-rose    { background: rgba(244,63,94,0.12);   border-color: rgba(244,63,94,0.3);   color: var(--rose-l); }
+
+    /* Fade in animation */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .glass { animation: fadeSlideUp 0.35s ease both; }
+    .blog-card:nth-child(2) { animation-delay: 0.05s; }
+    .blog-card:nth-child(3) { animation-delay: 0.10s; }
+    .blog-card:nth-child(4) { animation-delay: 0.15s; }
+    .blog-card:nth-child(5) { animation-delay: 0.20s; }
+    .blog-card:nth-child(6) { animation-delay: 0.25s; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ TOP BAR ════════════════ -->
+<nav class="top-bar">
+  <div class="logo">
+    <div class="logo-icon">DP</div>
+    <span>DevPath</span>
+    <span style="font-weight:400; color: var(--text-dim); font-size:0.8rem; margin-left:4px;">대학생 실무 튜토리얼</span>
+  </div>
+  <div class="top-pills">
+    <div class="pill"><span class="pill-dot"></span> 학습 중</div>
+    <div class="pill active">🏆 Lv.3 · 1,420 XP</div>
+    <div class="pill">🔥 5일 연속</div>
+    <div class="avatar">ME</div>
+  </div>
+</nav>
+
+<!-- ════════════════ MAIN DASHBOARD ════════════════ -->
+<div class="dashboard">
+
+  <!-- ══════════ LEFT COL — Roadmap Tree ══════════ -->
+  <div class="left-col">
+    <div class="glass" style="display:flex; flex-direction:column; height:100%;">
+      <div class="panel-header">
+        <span class="panel-title">🗺️ 학습 로드맵</span>
+        <span class="badge badge-indigo">Backend 트랙</span>
+      </div>
+
+      <!-- Track Tabs -->
+      <div class="track-tabs">
+        <button class="track-tab backend active" onclick="switchTrack('backend', this)">Backend</button>
+        <button class="track-tab devops"         onclick="switchTrack('devops', this)">DevOps</button>
+        <button class="track-tab embedded"       onclick="switchTrack('embedded', this)">Embedded</button>
+      </div>
+
+      <!-- Tree -->
+      <div class="tree-container" id="tree-container">
+
+        <!-- BACKEND TREE (default visible) -->
+        <ul class="tree-root" id="track-backend">
+
+          <li class="tree-branch">
+            <div class="node selected">
+              <div class="node-dot done">✓</div>
+              <div class="node-info">
+                <div class="node-name">HTTP & 웹 기초</div>
+                <div class="node-sub">요청/응답 사이클 이해</div>
+              </div>
+              <span class="node-xp done">+150 XP</span>
+            </div>
+            <ul class="tree-children">
+              <li class="tree-branch">
+                <div class="node">
+                  <div class="node-dot done">✓</div>
+                  <div class="node-info">
+                    <div class="node-name">REST 원칙</div>
+                    <div class="node-sub">GET·POST·PUT·DELETE</div>
+                  </div>
+                  <span class="node-xp done">+100 XP</span>
+                </div>
+              </li>
+              <li class="tree-branch">
+                <div class="node">
+                  <div class="node-dot done">✓</div>
+                  <div class="node-info">
+                    <div class="node-name">상태 코드 & 헤더</div>
+                    <div class="node-sub">2xx / 4xx / 5xx</div>
+                  </div>
+                  <span class="node-xp done">+80 XP</span>
+                </div>
+              </li>
+            </ul>
+          </li>
+
+          <li class="tree-branch">
+            <div class="node">
+              <div class="node-dot active">▶</div>
+              <div class="node-info">
+                <div class="node-name">프로그래밍 언어</div>
+                <div class="node-sub">Java 또는 Python 선택</div>
+              </div>
+              <span class="node-xp active">+200 XP</span>
+            </div>
+            <ul class="tree-children">
+              <li class="tree-branch">
+                <div class="node">
+                  <div class="node-dot active">▶</div>
+                  <div class="node-info">
+                    <div class="node-name">Java OOP 기초</div>
+                    <div class="node-sub">클래스·인터페이스·상속</div>
+                  </div>
+                  <span class="node-xp active">+150 XP</span>
+                </div>
+              </li>
+              <li class="tree-branch">
+                <div class="node">
+                  <div class="node-dot locked">🔒</div>
+                  <div class="node-info">
+                    <div class="node-name">Python 비동기 처리</div>
+                    <div class="node-sub">asyncio · aiohttp</div>
+                  </div>
+                  <span class="node-xp locked">+120 XP</span>
+                </div>
+              </li>
+            </ul>
+          </li>
+
+          <li class="tree-branch">
+            <div class="node">
+              <div class="node-dot locked">🔒</div>
+              <div class="node-info">
+                <div class="node-name">백엔드 프레임워크</div>
+                <div class="node-sub">Spring Boot / Express</div>
+              </div>
+              <span class="node-xp locked">+250 XP</span>
+            </div>
+            <ul class="tree-children">
+              <li class="tree-branch">
+                <div class="node">
+                  <div class="node-dot locked">🔒</div>
+                  <div class="node-info">
+                    <div class="node-name">Spring Boot DI</div>
+                    <div class="node-sub">Bean·Controller·Service</div>
+                  </div>
+                  <span class="node-xp locked">+180 XP</span>
+                </div>
+              </li>
+            </ul>
+          </li>
+
+          <li class="tree-branch">
+            <div class="node">
+              <div class="node-dot locked">🔒</div>
+              <div class="node-info">
+                <div class="node-name">데이터베이스 (RDB)</div>
+                <div class="node-sub">SQL · JPA · 트랜잭션</div>
+              </div>
+              <span class="node-xp locked">+300 XP</span>
+            </div>
+          </li>
+
+          <li class="tree-branch">
+            <div class="node">
+              <div class="node-dot locked">🔒</div>
+              <div class="node-info">
+                <div class="node-name">캐시 & NoSQL (Redis)</div>
+                <div class="node-sub">캐싱 전략 · 세션</div>
+              </div>
+              <span class="node-xp locked">+320 XP</span>
+            </div>
+          </li>
+
+          <li class="tree-branch">
+            <div class="node">
+              <div class="node-dot locked">🔒</div>
+              <div class="node-info">
+                <div class="node-name">클라우드 배포 (AWS)</div>
+                <div class="node-sub">EC2 · RDS · S3</div>
+              </div>
+              <span class="node-xp locked">+450 XP</span>
+            </div>
+          </li>
+
+        </ul>
+
+        <!-- DEVOPS TREE (hidden by default) -->
+        <ul class="tree-root" id="track-devops" style="display:none;">
+          <li class="tree-branch">
+            <div class="node"><div class="node-dot done">✓</div><div class="node-info"><div class="node-name">Linux & Shell 스크립트</div><div class="node-sub">bash·grep·awk·권한 관리</div></div><span class="node-xp done">+150 XP</span></div>
+          </li>
+          <li class="tree-branch">
+            <div class="node"><div class="node-dot active">▶</div><div class="node-info"><div class="node-name">네트워크 & 인프라 보안</div><div class="node-sub">TCP/IP·DNS·TLS·방화벽</div></div><span class="node-xp active">+200 XP</span></div>
+          </li>
+          <li class="tree-branch">
+            <div class="node"><div class="node-dot locked">🔒</div><div class="node-info"><div class="node-name">Docker 컨테이너화</div><div class="node-sub">Dockerfile·docker-compose</div></div><span class="node-xp locked">+250 XP</span></div>
+          </li>
+          <li class="tree-branch">
+            <div class="node"><div class="node-dot locked">🔒</div><div class="node-info"><div class="node-name">CI/CD 파이프라인</div><div class="node-sub">GitHub Actions · Jenkins</div></div><span class="node-xp locked">+300 XP</span></div>
+          </li>
+          <li class="tree-branch">
+            <div class="node"><div class="node-dot locked">🔒</div><div class="node-info"><div class="node-name">IaC (Terraform)</div><div class="node-sub">인프라 코드화 자동화</div></div><span class="node-xp locked">+350 XP</span></div>
+          </li>
+          <li class="tree-branch">
+            <div class="node"><div class="node-dot locked">🔒</div><div class="node-info"><div class="node-name">Kubernetes 오케스트레이션</div><div class="node-sub">Pod·Service·Deployment</div></div><span class="node-xp locked">+450 XP</span></div>
+          </li>
+        </ul>
+
+        <!-- EMBEDDED TREE (hidden by default) -->
+        <ul class="tree-root" id="track-embedded" style="display:none;">
+          <li class="tree-branch">
+            <div class="node"><div class="node-dot done">✓</div><div class="node-info"><div class="node-name">C/C++ 기초</div><div class="node-sub">포인터·메모리 구조·배열</div></div><span class="node-xp done">+150 XP</span></div>
+          </li>
+          <li class="tree-branch">
+            <div class="node"><div class="node-dot active">▶</div><div class="node-info"><div class="node-name">컴퓨터 구조 & 어셈블리</div><div class="node-sub">레지스터·스택·ARM ISA</div></div><span class="node-xp active">+200 XP</span></div>
+          </li>
+          <li class="tree-branch">
+            <div class="node"><div class="node-dot locked">🔒</div><div class="node-info"><div class="node-name">MCU 주변장치 제어</div><div class="node-sub">GPIO·I2C·SPI·UART</div></div><span class="node-xp locked">+250 XP</span></div>
+          </li>
+          <li class="tree-branch">
+            <div class="node"><div class="node-dot locked">🔒</div><div class="node-info"><div class="node-name">펌웨어 & 레지스터 설계</div><div class="node-sub">비트마스킹·하드웨어 추상화</div></div><span class="node-xp locked">+300 XP</span></div>
+          </li>
+          <li class="tree-branch">
+            <div class="node"><div class="node-dot locked">🔒</div><div class="node-info"><div class="node-name">RTOS 멀티태스킹</div><div class="node-sub">FreeRTOS·태스크·세마포어</div></div><span class="node-xp locked">+350 XP</span></div>
+          </li>
+          <li class="tree-branch">
+            <div class="node"><div class="node-dot locked">🔒</div><div class="node-info"><div class="node-name">회로 디버깅 & 드라이버</div><div class="node-sub">오실로스코프·드라이버 포팅</div></div><span class="node-xp locked">+450 XP</span></div>
+          </li>
+        </ul>
+
+      </div>
+
+      <!-- Progress footer -->
+      <div class="progress-footer">
+        <div class="progress-label">
+          <span id="progress-label-text">백엔드 로드맵 진행률</span>
+          <span id="progress-label-pct" style="color: var(--indigo-l); font-weight:700;">33%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width:33%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ RIGHT COL ══════════ -->
+  <div class="right-col">
+
+    <!-- ── BLOG REFERENCE CARDS ── -->
+    <div class="glass cards-section">
+      <div class="panel-header">
+        <span class="panel-title">📚 추천 학습 레퍼런스</span>
+        <div style="display:flex; gap:6px;">
+          <span class="badge badge-emerald">✦ 큐레이션됨</span>
+          <span class="badge badge-amber">6개 링크</span>
+        </div>
+      </div>
+
+      <div class="cards-grid">
+
+        <div class="blog-card backend">
+          <div class="card-tag tag-backend">⬡ Backend</div>
+          <div class="card-title">백엔드 기초 공부법: Spring Boot 완전 정복</div>
+          <div class="card-desc">Spring Boot의 DI 컨테이너, JPA 연동, REST API 설계 패턴을 단계적으로 익히는 공식 가이드 기반 정리.</div>
+          <div class="card-footer">
+            <div class="card-author">
+              <div class="mini-avatar" style="background: linear-gradient(135deg, var(--indigo), #4f46e5);">S</div>
+              <span>Spring 공식</span>
+            </div>
+            <a class="card-link" href="https://spring.io/guides" target="_blank" rel="noreferrer">읽기 →</a>
+          </div>
+        </div>
+
+        <div class="blog-card devops">
+          <div class="card-tag tag-devops">⬡ DevOps</div>
+          <div class="card-title">DevOps 인프라 실무: Docker & CI/CD 입문</div>
+          <div class="card-desc">컨테이너 가상화의 개념부터 docker-compose, GitHub Actions 자동화 배포 파이프라인 설계까지.</div>
+          <div class="card-footer">
+            <div class="card-author">
+              <div class="mini-avatar" style="background: linear-gradient(135deg, var(--cyan), #0891b2);">D</div>
+              <span>Docker 공식</span>
+            </div>
+            <a class="card-link" href="https://docs.docker.com/get-started/" target="_blank" rel="noreferrer">읽기 →</a>
+          </div>
+        </div>
+
+        <div class="blog-card embedded">
+          <div class="card-tag tag-embedded">⬡ Embedded</div>
+          <div class="card-title">임베디드 C: GPIO 레지스터 비트마스킹 제어</div>
+          <div class="card-desc">ARM Cortex-M 기반 MCU에서 GPIO 레지스터를 비트 연산으로 제어하는 실무 펌웨어 코딩 패턴.</div>
+          <div class="card-footer">
+            <div class="card-author">
+              <div class="mini-avatar" style="background: linear-gradient(135deg, var(--amber), #d97706);">A</div>
+              <span>ARM Developer</span>
+            </div>
+            <a class="card-link" href="https://developer.arm.com/documentation" target="_blank" rel="noreferrer">읽기 →</a>
+          </div>
+        </div>
+
+        <div class="blog-card db">
+          <div class="card-tag tag-db">⬡ Database</div>
+          <div class="card-title">SQL 실무 기초: 조인·인덱스·트랜잭션 총정리</div>
+          <div class="card-desc">SELECT 기본부터 N+1 쿼리 문제, B-Tree 인덱스 설계, 트랜잭션 격리 수준까지 핵심만 압축.</div>
+          <div class="card-footer">
+            <div class="card-author">
+              <div class="mini-avatar" style="background: linear-gradient(135deg, var(--emerald), #059669);">P</div>
+              <span>PostgreSQL 공식</span>
+            </div>
+            <a class="card-link" href="https://www.postgresql.org/docs/" target="_blank" rel="noreferrer">읽기 →</a>
+          </div>
+        </div>
+
+        <div class="blog-card linux">
+          <div class="card-tag tag-linux">⬡ Linux</div>
+          <div class="card-title">Linux 명령어 생존 키트: 실무 필수 50선</div>
+          <div class="card-desc">ls, grep, awk, sed, curl, systemctl 등 백엔드·임베디드·데브옵스 현업에서 매일 쓰는 명령어 모음.</div>
+          <div class="card-footer">
+            <div class="card-author">
+              <div class="mini-avatar" style="background: linear-gradient(135deg, var(--rose), #e11d48);">L</div>
+              <span>Linux Man Pages</span>
+            </div>
+            <a class="card-link" href="https://linux.die.net/man/" target="_blank" rel="noreferrer">읽기 →</a>
+          </div>
+        </div>
+
+        <div class="blog-card cloud">
+          <div class="card-tag tag-cloud">⬡ Cloud</div>
+          <div class="card-title">Kubernetes 입문: Pod·Service·Deployment 개념</div>
+          <div class="card-desc">컨테이너 오케스트레이션의 핵심 오브젝트와 kubectl 명령어, 로컬 minikube 실습 환경 구성 가이드.</div>
+          <div class="card-footer">
+            <div class="card-author">
+              <div class="mini-avatar" style="background: linear-gradient(135deg, var(--cyan), var(--indigo));">K</div>
+              <span>Kubernetes 공식</span>
+            </div>
+            <a class="card-link" href="https://kubernetes.io/docs/home/" target="_blank" rel="noreferrer">읽기 →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Q&A BOARD ── -->
+    <div class="glass qa-section">
+      <div class="panel-header">
+        <span class="panel-title">💬 Q&A 게시판</span>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span class="badge badge-rose">⚠ 3 / 20</span>
+          <span class="badge badge-cyan">답변 대기 1건</span>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="qa-controls">
+        <div class="qa-search">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: var(--text-dim); flex-shrink:0;"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" placeholder="질문 제목이나 키워드를 검색하세요..." />
+        </div>
+      </div>
+
+      <!-- Tag filters + counter -->
+      <div class="qa-tag-row">
+        <button class="qa-tag active">전체</button>
+        <button class="qa-tag">#Backend</button>
+        <button class="qa-tag">#Embedded</button>
+        <button class="qa-tag">#DevOps</button>
+        <button class="qa-tag">#Database</button>
+        <button class="qa-tag">#Docker</button>
+        <button class="qa-tag">#Linux</button>
+        <span class="qa-counter">질문 수: 3 / 20</span>
+      </div>
+
+      <!-- Q&A List -->
+      <div class="qa-list">
+
+        <div class="qa-item">
+          <div class="vote-col">
+            <button class="vote-btn upvoted">▲</button>
+            <span class="vote-count">12</span>
+          </div>
+          <div class="qa-body">
+            <div class="qa-title">Spring Boot와 Node.js 중 백엔드 입문용으로 무엇이 더 좋을까요?</div>
+            <div class="qa-excerpt">Java Spring Boot를 바로 파고들어야 할지, 자바스크립트 학습 후 Express(Node.js)로 시작해야 할지 갈피를 못 잡겠습니다. 실무에서 어떤 언어/프레임워크가 더 경쟁력 있을까요?</div>
+            <div class="qa-meta">
+              <span class="badge badge-indigo">#Backend</span>
+              <span class="badge badge-indigo">#Database</span>
+              <span class="qa-replies">답변 1개</span>
+              <span class="qa-author">백엔드새싹 · 3시간 전</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="vote-col">
+            <button class="vote-btn">▲</button>
+            <span class="vote-count">8</span>
+          </div>
+          <div class="qa-body">
+            <div class="qa-title">임베디드 개발을 위해 C++까지 깊게 공부해야 할까요?</div>
+            <div class="qa-excerpt">MCU 제어에는 C 언어가 표준으로 쓰인다고 들었는데, 현대 임베디드 실무에서 C++ 객체 지향 프로그래밍도 많이 활용되나요?</div>
+            <div class="qa-meta">
+              <span class="badge badge-amber">#Embedded</span>
+              <span class="badge badge-amber">#C-Language</span>
+              <span class="qa-replies">답변 0개</span>
+              <span class="qa-author">하드웨어러버 · 어제</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="vote-col">
+            <button class="vote-btn">▲</button>
+            <span class="vote-count">5</span>
+          </div>
+          <div class="qa-body">
+            <div class="qa-title">CI/CD 파이프라인 구축 시 Jenkins와 GitHub Actions의 차이</div>
+            <div class="qa-excerpt">최근에는 GitHub Actions로 간편하게 워크플로우를 정의하는 기업들이 많다고 들었습니다. 두 도구의 현업 체감 장단점이 궁금합니다.</div>
+            <div class="qa-meta">
+              <span class="badge badge-cyan">#DevOps</span>
+              <span class="badge badge-cyan">#Docker</span>
+              <span class="qa-replies">답변 1개</span>
+              <span class="qa-author">인프라초보 · 3일 전</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Compose new question -->
+      <div class="limit-warn">
+        ⚠ 현재 게시판은 3/20 질문이 등록되었습니다. 17개의 슬롯이 남아있습니다.
+      </div>
+      <div class="qa-compose">
+        <input class="compose-input" type="text" placeholder="새로운 질문 제목을 입력하세요... (등록 시 +50 XP)" />
+        <button class="btn-primary">질문 등록 +</button>
+      </div>
+    </div>
+
+  </div><!-- /right-col -->
+</div><!-- /dashboard -->
+
+<script>
+  // ── Track Tab Switcher ──
+  const trackData = {
+    backend:  { label: '백엔드 로드맵 진행률',  pct: 33,  badge: 'Backend 트랙',  gradFrom: '#6366f1', gradTo: '#06b6d4' },
+    devops:   { label: 'DevOps 로드맵 진행률',  pct: 17,  badge: 'DevOps 트랙',   gradFrom: '#06b6d4', gradTo: '#10b981' },
+    embedded: { label: '임베디드 로드맵 진행률', pct: 17,  badge: 'Embedded 트랙', gradFrom: '#f59e0b', gradTo: '#f43f5e' },
+  }
+
+  function switchTrack(track, btn) {
+    // Tab active states
+    document.querySelectorAll('.track-tab').forEach(t => t.classList.remove('active'))
+    btn.classList.add('active')
+
+    // Show/hide trees
+    ;['backend','devops','embedded'].forEach(t => {
+      document.getElementById('track-' + t).style.display = t === track ? 'block' : 'none'
+    })
+
+    // Update progress
+    const d = trackData[track]
+    document.getElementById('progress-label-text').textContent = d.label
+    document.getElementById('progress-label-pct').textContent = d.pct + '%'
+    document.getElementById('progress-fill').style.width = d.pct + '%'
+    document.getElementById('progress-fill').style.background =
+      `linear-gradient(90deg, ${d.gradFrom}, ${d.gradTo})`
+
+    // Update header badge
+    document.querySelector('.panel-header .badge-indigo').textContent = d.badge
+  }
+
+  // ── Vote Buttons ──
+  document.querySelectorAll('.vote-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const col = btn.closest('.vote-col')
+      const countEl = col.querySelector('.vote-count')
+      const wasUpvoted = btn.classList.contains('upvoted')
+      btn.classList.toggle('upvoted')
+      countEl.textContent = parseInt(countEl.textContent) + (wasUpvoted ? -1 : 1)
+    })
+  })
+
+  // ── Tag Filter (visual only) ──
+  document.querySelectorAll('.qa-tag').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.qa-tag').forEach(b => b.classList.remove('active'))
+      btn.classList.add('active')
+    })
+  })
+</script>
+
+</body>
+</html>

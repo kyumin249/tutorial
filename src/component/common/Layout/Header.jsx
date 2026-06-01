@@ -11,8 +11,8 @@ function Header({ userStats }) {
   return (
     <div className="header-container">
       <div className="header-title-section">
-        <h1>개발 공부 학습 공간</h1>
-        <p>환영합니다! 오늘도 즐거운 웹 개발 공부 되세요.</p>
+        <h1>백엔드 · 임베디드 · 데브옵스 학습 공간</h1>
+        <p>환영합니다! 오늘도 실무 중심의 개발자 학습 되세요. 🚀</p>
       </div>
 
       <div className="header-right">
@@ -41,11 +41,11 @@ function Header({ userStats }) {
           </div>
         </div>
 
-        {/* Badge Awards */}
+        {/* Job-specific Badge Awards */}
         <div className="header-badge-list">
-          <span className="badge badge-indigo">HTML 마스터</span>
-          <span className="badge badge-magenta">CSS 요정</span>
-          {completedRoadmapsCount > 2 && <span className="badge badge-emerald">JS 히어로</span>}
+          <span className="badge badge-indigo">API 마스터</span>
+          <span className="badge badge-emerald">C언어 마스터</span>
+          {completedRoadmapsCount > 2 && <span className="badge badge-magenta">CI/CD 히어로</span>}
         </div>
 
         {/* Notifications mock */}
