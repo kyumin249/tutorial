@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import  { useState, useEffect } from 'react'
 import Layout from './component/common/Layout/Layout'
 import Dashboard from './component/dashboard/Dashboard'
 import Roadmap from './component/roadmap/Roadmap'
@@ -72,17 +72,30 @@ function App() {
   const [completedRoadmapNodes, setCompletedRoadmapNodes] = useState(() => {
     const saved = localStorage.getItem('devpath_completed_roadmap')
     const parsed = saved ? JSON.parse(saved) : null
-    if (!parsed || parsed['html-css'] !== undefined || parsed['js-basics'] !== undefined) {
-      return {
-        'back-http': true,
-        'back-lang': true,
-        'emb-c': false,
-        'emb-arch': false,
-        'dev-linux': false,
-        'dev-net': false
-      }
+    const defaultNodes = {
+      'back-http': true,
+      'back-lang': true,
+      'back-framework': false,
+      'back-db': false,
+      'back-cache': false,
+      'back-cloud': false,
+      'emb-c': false,
+      'emb-arch': false,
+      'emb-peripheral': false,
+      'emb-register': false,
+      'emb-rtos': false,
+      'emb-debug': false,
+      'dev-linux': false,
+      'dev-net': false,
+      'dev-docker': false,
+      'dev-cicd': false,
+      'dev-iac': false,
+      'dev-k8s': false
     }
-    return parsed
+    if (!parsed || parsed['html-css'] !== undefined || parsed['js-basics'] !== undefined) {
+      return defaultNodes
+    }
+    return { ...defaultNodes, ...parsed }
   })
 
   const [completedLessons, setCompletedLessons] = useState(() => {

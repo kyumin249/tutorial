@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 function QA({ questions, setQuestions, addXp }) {
   const [activeQuestionId, setActiveQuestionId] = useState(null)
@@ -14,7 +14,7 @@ function QA({ questions, setQuestions, addXp }) {
   // Reply field
   const [replyText, setReplyText] = useState('')
 
-  const availableTags = ['All', 'React', 'Vite', 'CSS', 'JavaScript']
+  const availableTags = ['All', 'Backend', 'Embedded', 'DevOps', 'Database', 'C-Language', 'Docker', 'Linux']
 
   const handleUpvote = (qId, e) => {
     e.stopPropagation() // Prevent opening question detail
@@ -36,6 +36,10 @@ function QA({ questions, setQuestions, addXp }) {
 
   const handleAskQuestionSubmit = (e) => {
     e.preventDefault()
+    if (questions.length >= 20) {
+      alert('더 이상 질문을 등록할 수 없습니다. 최대 질문 개수(20개)를 초과할 수 없습니다.')
+      return
+    }
     if (!newTitle.trim() || !newContent.trim()) return
 
     const parsedTags = newTags.split(',')
@@ -116,8 +120,13 @@ function QA({ questions, setQuestions, addXp }) {
 
   return (
     <div>
-      <h2 className="page-title">Q&A 게시판</h2>
-      <p className="page-subtitle">리액트와 웹 개발을 학습하며 겪는 애로사항을 자유롭게 질문하고 토론하는 커뮤니티형 피드입니다.</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '0.5rem' }}>
+        <h2 className="page-title" style={{ margin: 0 }}>Q&A 게시판</h2>
+        <span className={`badge ${questions.length >= 20 ? 'badge-rose' : 'badge-indigo'}`} style={{ fontSize: '0.875rem', padding: '0.375rem 0.75rem' }}>
+          현재 질문 수: {questions.length} / 20
+        </span>
+      </div>
+      <p className="page-subtitle">백엔드·임베디드·데브옵스 기술 학습을 진행하며 겪는 다양한 실무 애로사항을 자유롭게 공유하고 피드백을 받아보세요.</p>
 
       {activeQuestion ? (
         /* ==================== QUESTION DETAIL VIEW ==================== */
@@ -220,8 +229,19 @@ function QA({ questions, setQuestions, addXp }) {
               ))}
             </div>
 
-            <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
-              질문 작성하기
+            <button 
+              className="btn btn-primary" 
+              onClick={() => {
+                if (questions.length >= 20) {
+                  alert('현재 질문 수가 20개 상한에 도달하여 더 이상 질문을 등록할 수 없습니다.')
+                  return
+                }
+                setIsModalOpen(true)
+              }}
+              disabled={questions.length >= 20}
+              style={{ opacity: questions.length >= 20 ? 0.6 : 1, cursor: questions.length >= 20 ? 'not-allowed' : 'pointer' }}
+            >
+              {questions.length >= 20 ? '질문 등록 완료 (20/20)' : '질문 작성하기'}
               <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" width="16" height="16">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
               </svg>
@@ -282,6 +302,10 @@ function QA({ questions, setQuestions, addXp }) {
             )}
           </div>
 
+          <div className="limit-warn" style={{ color: questions.length >= 20 ? 'var(--color-danger)' : 'var(--color-warning)', padding: '0.75rem 1rem', background: questions.length >= 20 ? 'rgba(239, 68, 68, 0.08)' : 'rgba(245, 158, 11, 0.05)', border: questions.length >= 20 ? '1px dashed var(--color-danger)' : '1px dashed var(--border-color)', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', marginTop: '1rem' }}>
+            <span>⚠ 현재 게시판에는 {questions.length} / 20개의 질문이 등록되어 있습니다. {questions.length >= 20 ? '더 이상 질문 등록이 불가능합니다.' : `${20 - questions.length}개의 슬롯이 남아있습니다.`}</span>
+          </div>
+
           {/* ==================== ASK QUESTION MODAL DIALOG ==================== */}
           {isModalOpen && (
             <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
@@ -330,9 +354,21 @@ function QA({ questions, setQuestions, addXp }) {
                     />
                   </div>
 
+                  {questions.length >= 20 && (
+                    <div style={{ color: 'var(--color-danger)', fontSize: '0.8125rem', textAlign: 'right', fontWeight: 600 }}>
+                      ⚠ 현재 질문 수 20개 도달로 추가 등록이 차단되었습니다.
+                    </div>
+                  )}
                   <div className="modal-footer">
                     <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>취소</button>
-                    <button type="submit" className="btn btn-primary">질문 등록하기 (+50 XP)</button>
+                    <button 
+                      type="submit" 
+                      className="btn btn-primary"
+                      disabled={questions.length >= 20}
+                      style={{ opacity: questions.length >= 20 ? 0.6 : 1, cursor: questions.length >= 20 ? 'not-allowed' : 'pointer' }}
+                    >
+                      질문 등록하기 (+50 XP)
+                    </button>
                   </div>
                 </form>
               </div>

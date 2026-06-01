@@ -1,15 +1,6 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-function Tutorial({ completedLessons, toggleLessonCompletion, addXp }) {
-  const [activeTrack, setActiveTrack] = useState('backend')
-  const [activeLessonId, setActiveLessonId] = useState('backend-rest')
-  const [sandboxCode, setSandboxCode] = useState('')
-  const [consoleOutput, setConsoleOutput] = useState('코드 실행 준비 완료. [Run Code] 버튼을 누르세요.')
-  const [consoleError, setConsoleError] = useState(false)
-  const [quizAnswerSelected, setQuizAnswerSelected] = useState(null)
-  const [quizStatus, setQuizStatus] = useState(null)
-
-  const allLessons = {
+const allLessons = {
     backend: [
       {
         id: 'backend-rest',
@@ -625,6 +616,15 @@ console.log(''); dep.scale(1);`,
     ]
   }
 
+function Tutorial({ completedLessons, toggleLessonCompletion, addXp }) {
+  const [activeTrack, setActiveTrack] = useState('backend')
+  const [activeLessonId, setActiveLessonId] = useState('backend-rest')
+  const [sandboxCode, setSandboxCode] = useState(allLessons.backend[0].codePreset)
+  const [consoleOutput, setConsoleOutput] = useState('코드 실행 준비 완료. [Run Code] 버튼을 누르세요.')
+  const [consoleError, setConsoleError] = useState(false)
+  const [quizAnswerSelected, setQuizAnswerSelected] = useState(null)
+  const [quizStatus, setQuizStatus] = useState(null)
+
   const currentLessons = allLessons[activeTrack]
   const activeLesson = currentLessons.find(l => l.id === activeLessonId) || currentLessons[0]
   const isLessonCompleted = completedLessons[activeLesson.id]
@@ -651,11 +651,6 @@ console.log(''); dep.scale(1);`,
       setQuizStatus(null)
     }
   }
-
-  // Initialize sandbox code on first render
-  React.useEffect(() => {
-    setSandboxCode(allLessons[activeTrack][0].codePreset)
-  }, [])
 
   const handleRunCode = () => {
     setConsoleOutput('실행 중...')

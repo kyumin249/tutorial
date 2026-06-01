@@ -1449,3 +1449,87 @@ button {
   margin-top: 1rem;
 }
 
+/* Track Tab Switcher Styles */
+.track-tabs {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  width: 100%;
+  margin-bottom: 2rem;
+  z-index: 10;
+}
+
+.track-tab {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border-radius: calc(var(--radius-sm) - 2px);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.track-tab:hover:not(.active) {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.track-tab.backend.active {
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--color-primary-light);
+  box-shadow: inset 0 0 8px rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.track-tab.devops.active {
+  background: rgba(217, 70, 239, 0.15);
+  color: var(--color-secondary);
+  box-shadow: inset 0 0 8px rgba(217, 70, 239, 0.1);
+  border-color: rgba(217, 70, 239, 0.3);
+}
+
+.track-tab.embedded.active {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-success);
+  box-shadow: inset 0 0 8px rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* Progress Footer Styles */
+.progress-footer {
+  width: 100%;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border-color);
+  margin-top: 1rem;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+  height: 6px;
+  width: 100%;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+

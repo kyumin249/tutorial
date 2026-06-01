@@ -1,7 +1,5 @@
-import React from 'react'
-
 function Header({ userStats }) {
-  const { xp = 1420, completedRoadmapsCount = 2, completedLessonsCount = 3 } = userStats || {}
+  const { xp = 1420, completedRoadmapsCount = 2 } = userStats || {}
   
   // Calculate Level based on XP
   const level = Math.floor(xp / 500) + 1

@@ -1,4 +1,3 @@
-import React from 'react'
 
 function Dashboard({ setCurrentPage, userStats, completedRoadmapNodes, completedLessons }) {
   const { xp = 1420 } = userStats || {}
